@@ -1,11 +1,6 @@
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    >
-  </q-page>
+<h1>Lorem ipsum dolor sit amet.</h1>
+<div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam hic voluptatem dolores nam saepe itaque atque? Maiores temporibus voluptate, quaerat perspiciatis optio repellat laboriosam cum vel ab quidem facere quibusdam.</div>
 </template>
 
 <script>
