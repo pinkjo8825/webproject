@@ -3,9 +3,6 @@
     <q-header reveal elevated class="bg-primary text-white" height-hint="91">
       <q-toolbar>
         <q-btn flat to="/" icon="local_car_wash" label="Car Washing System" />
-        <span>{{ storeLogUser.userid }}</span>
-        <span>{{ storeLogUser.fullname }}</span>
-        <span>{{ storeLogUser.accessToken }}</span>
         <q-space />
 
         <q-tabs>
@@ -25,15 +22,17 @@
           label="Log in"
           @click="showLoginDialog = true"
         />
+
         <q-dialog persistent v-model="showLoginDialog" ref="loginDialog">
           <q-card>
-            <q-card-section class="flex justify-between">
+            <q-card-section class="q-mx-sm flex justify-between">
               <div class="text-h6">Login</div>
+
               <q-btn flat icon="close" v-close-popup ref="loginCloseBtn" />
             </q-card-section>
 
             <q-card-section class="q-pt-none">
-              <q-form class="q-gutter-md" @submit="onLoginSubmit">
+              <q-form class="q-gutter-md" @submit.prevent="onLoginSubmit">
                 <div>
                   <q-input
                     v-model="username"
@@ -90,18 +89,77 @@
           </q-card>
         </q-dialog>
 
-        <q-dialog persistent v-model="showRegisterDialog">
+        <q-dialog persistent v-model="showRegisterDialog" ref="registerDialog">
           <q-card>
-            <q-card-section>
+            <q-card-section class="flex justify-between">
               <div class="text-h6">Register</div>
+              <q-btn flat icon="close" v-close-popup ref="registerCloseBtn" />
             </q-card-section>
 
             <q-card-section class="q-pt-none">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
+              <q-card-section>
+                <q-form
+                  @submit.prevent="onSubmit"
+                  @reset="onReset"
+                  class="q-gutter-md"
+                  ref="registerForm"
+                >
+                  <div>
+                    <q-input
+                      v-model="storeLogUser.Fullname"
+                      type="text"
+                      label="Your Fullname"
+                      lazy-rules
+                      :rules= "[
+                        (val) => (val && val.length > 0) || 'Field is required'
+                      ]"
+                    />
+                  </div>
+                  <div>
+                    <q-input
+                      v-model="storeLogUser.email"
+                      type="text"
+                      label="Your Email"
+                      lazy-rules
+                      :rules="[emailValidate, requiredValidate]"
+                    />
+                  </div>
+                  <div>
+                    <q-input
+                      v-model="username"
+                      type="text"
+                      label="Your username"
+                      lazy-rules
+                      :rules="[requiredValidate]"
+                    />
+                  </div>
+                  <div>
+                    <q-input
+                      v-model="password"
+                      :type="isPwd ? 'password' : 'text'"
+                      label="Your Password"
+                      lazy-rules
+                      :rules="[
+                        (val) =>
+                          (val && val.length >= 6) ||
+                          'Must be at least 6 characters',
+                      ]"
+                    >
+                      <template #append>
+                        <q-icon
+                          :name="isPwd ? 'visibility_off' : 'visibility'"
+                          class="cursor-pointer"
+                          @click="isPwd = !isPwd"
+                        />
+                      </template>
+                    </q-input>
+                  </div>
+                </q-form>
+              </q-card-section>
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn flat label="Cancel" color="secondary" v-close-popup />
-              <q-btn flat label="OK" color="primary" v-close-popup />
+              <q-btn flat label="reset" type="reset" color="secondary" />
+              <q-btn label="Submit" type="submit" color="primary" />
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -115,28 +173,35 @@
     <q-footer reveal bordered class="bg-grey-8 text-white"> </q-footer>
   </q-layout>
 </template>
+
 <script>
-import { ref } from "vue";
+import { emailValidate, requiredValidate } from "../utils/validations";
 import { useCounterStore } from "../stores/user";
 export default {
   name: "LandingLayout",
   data() {
+
     return {
       showLoginDialog: false,
       showRegisterDialog: false,
-      username: "3456123",
-      password: "nul123l",
+      username: "",
+      password: "",
       isPwd: true,
       storeLogUser: useCounterStore(),
     };
   },
   methods: {
+    emailValidate,
+    requiredValidate,
     onLoginSubmit() {
       console.log(this.username);
       console.log(this.password);
       this.storeLogUser.logInStatus = true;
       this.$refs.loginDialog.hide();
     },
+    onRegisterSubmit() {
+      this.$refs.registerDialog.hide();
+    }
   },
 };
 </script>

@@ -3,9 +3,12 @@ import { defineStore } from 'pinia';
 export const useCounterStore = defineStore('counter', {
   state: () => ({
     logInStatus: false,
-    userid: '',
     fullname: '',
+    userid: '',
+    password: '',
+    username: '',
     accessToken: '',
+    email: '',
   }),
 
   getters: {
