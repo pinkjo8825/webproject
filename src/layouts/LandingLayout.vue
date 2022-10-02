@@ -3,6 +3,9 @@
     <q-header reveal elevated class="bg-primary text-white" height-hint="91">
       <q-toolbar>
         <q-btn flat to="/" icon="local_car_wash" label="Car Washing System" />
+        <span>{{ storeLogUser.userid }}</span>
+        <span>{{ storeLogUser.fullname }}</span>
+        <span>{{ storeLogUser.accessToken }}</span>
         <q-space />
 
         <q-tabs>
@@ -11,9 +14,10 @@
         </q-tabs>
 
         <q-btn
-          v-if="logInStatus"
+          v-if="storeLogUser.logInStatus"
           style="background: #ff0080; color: white"
           label="Log out"
+          @click="storeLogUser.logInStatus = false"
         />
         <q-btn
           v-else
@@ -21,25 +25,67 @@
           label="Log in"
           @click="showLoginDialog = true"
         />
-        <q-dialog persistent v-model="showLoginDialog">
+        <q-dialog persistent v-model="showLoginDialog" ref="loginDialog">
           <q-card>
-            <q-card-section>
+            <q-card-section class="flex justify-between">
               <div class="text-h6">Login</div>
+              <q-btn flat icon="close" v-close-popup ref="loginCloseBtn" />
             </q-card-section>
 
             <q-card-section class="q-pt-none">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
-              repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis
-              perferendis totam, ea at omnis vel numquam exercitationem aut,
-              natus minima, porro labore.
+              <q-form class="q-gutter-md" @submit="onLoginSubmit">
+                <div>
+                  <q-input
+                    v-model="username"
+                    type="text"
+                    label="Your Username"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length > 0) ||
+                        'Must be at least 1 character!',
+                    ]"
+                  />
+                </div>
+                <div>
+                  <q-input
+                    v-model="password"
+                    :type="isPwd ? 'password' : 'text'"
+                    label="Your Password"
+                    lazy-rules
+                    :rules="[
+                      (val) =>
+                        (val && val.length >= 6) ||
+                        'Must be at least 6 characters',
+                    ]"
+                  >
+                    <template #append>
+                      <q-icon
+                        :name="isPwd ? 'visibility_off' : 'visibility'"
+                        class="cursor-pointer"
+                        @click="isPwd = !isPwd"
+                      />
+                    </template>
+                  </q-input>
+                </div>
+                <div>
+                  <q-btn
+                    label="Submit"
+                    color="primary"
+                    type="submit"
+                    style="width: 100%"
+                  />
+                </div>
+              </q-form>
             </q-card-section>
 
-            <q-card-actions align="right">
-              <q-btn flat style="color: #FF0080" label="Create an account."
-              @click="showRegisterDialog = true" />
-              <q-space/>
-              <q-btn flat label="Cancel" color="secondary" v-close-popup />
-              <q-btn flat label="OK" color="primary" v-close-popup />
+            <q-card-actions align="left">
+              <q-btn
+                flat
+                style="color: #ff0080"
+                label="Create an account."
+                @click="showRegisterDialog = true"
+              />
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -66,28 +112,31 @@
       <router-view />
     </q-page-container>
 
-    <q-footer reveal bordered class="bg-grey-8 text-white">
-      <q-toolbar>
-        <q-toolbar-title>
-          <!-- <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-          </q-avatar> -->
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-footer>
+    <q-footer reveal bordered class="bg-grey-8 text-white"> </q-footer>
   </q-layout>
 </template>
 <script>
+import { ref } from "vue";
+import { useCounterStore } from "../stores/user";
 export default {
   name: "LandingLayout",
   data() {
     return {
       showLoginDialog: false,
       showRegisterDialog: false,
-      logInStatus: false,
+      username: "3456123",
+      password: "nul123l",
+      isPwd: true,
+      storeLogUser: useCounterStore(),
     };
   },
-  method: {
-  }
+  methods: {
+    onLoginSubmit() {
+      console.log(this.username);
+      console.log(this.password);
+      this.storeLogUser.logInStatus = true;
+      this.$refs.loginDialog.hide();
+    },
+  },
 };
 </script>
