@@ -5,7 +5,12 @@
   import { defineComponent } from 'vue'
 
   export default defineComponent({
-    name: 'pricePage'
+    name: 'pricePage',
+    data() {
+      return {
+        login: true,
+      }
+    }
   })
   </script>
 
