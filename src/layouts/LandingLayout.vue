@@ -83,83 +83,9 @@
                 flat
                 style="color: #ff0080"
                 label="Create an account."
-                @click="showRegisterDialog = true"
+                v-close-popup
+                @click="this.$router.push('/register')"
               />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-
-        <q-dialog persistent v-model="showRegisterDialog" ref="registerDialog">
-          <q-card>
-            <q-card-section class="flex justify-between">
-              <div class="text-h6">Register</div>
-              <q-btn flat icon="close" v-close-popup ref="registerCloseBtn" />
-            </q-card-section>
-
-            <q-card-section class="q-pt-none">
-              <q-card-section>
-                <q-form
-                  @submit.prevent="onSubmit"
-                  @reset="onReset"
-                  class="q-gutter-md"
-                  ref="registerForm"
-                >
-                  <div>
-                    <q-input
-                      v-model="storeLogUser.Fullname"
-                      type="text"
-                      label="Your Fullname"
-                      lazy-rules
-                      :rules= "[
-                        (val) => (val && val.length > 0) || 'Field is required'
-                      ]"
-                    />
-                  </div>
-                  <div>
-                    <q-input
-                      v-model="storeLogUser.email"
-                      type="text"
-                      label="Your Email"
-                      lazy-rules
-                      :rules="[emailValidate, requiredValidate]"
-                    />
-                  </div>
-                  <div>
-                    <q-input
-                      v-model="username"
-                      type="text"
-                      label="Your username"
-                      lazy-rules
-                      :rules="[requiredValidate]"
-                    />
-                  </div>
-                  <div>
-                    <q-input
-                      v-model="password"
-                      :type="isPwd ? 'password' : 'text'"
-                      label="Your Password"
-                      lazy-rules
-                      :rules="[
-                        (val) =>
-                          (val && val.length >= 6) ||
-                          'Must be at least 6 characters',
-                      ]"
-                    >
-                      <template #append>
-                        <q-icon
-                          :name="isPwd ? 'visibility_off' : 'visibility'"
-                          class="cursor-pointer"
-                          @click="isPwd = !isPwd"
-                        />
-                      </template>
-                    </q-input>
-                  </div>
-                </q-form>
-              </q-card-section>
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn flat label="reset" type="reset" color="secondary" />
-              <q-btn label="Submit" type="submit" color="primary" />
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -169,8 +95,9 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-
+    <p>uppper</p>
     <q-footer reveal bordered class="bg-grey-8 text-white"> </q-footer>
+    <hp1>lower</hp1>
   </q-layout>
 </template>
 
@@ -180,7 +107,6 @@ import { useCounterStore } from "../stores/user";
 export default {
   name: "LandingLayout",
   data() {
-
     return {
       showLoginDialog: false,
       showRegisterDialog: false,
@@ -199,9 +125,6 @@ export default {
       this.storeLogUser.logInStatus = true;
       this.$refs.loginDialog.hide();
     },
-    onRegisterSubmit() {
-      this.$refs.registerDialog.hide();
-    }
   },
 };
 </script>
