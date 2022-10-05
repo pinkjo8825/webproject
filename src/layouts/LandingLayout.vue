@@ -4,7 +4,18 @@
       <q-toolbar>
         <q-btn flat to="/" icon="local_car_wash" label="Car Washing System" />
         <q-space />
-
+        <q-btn
+          class="no-shadow text-yellow-14"
+          flat
+          v-if="storeLogUser.logInStatus"
+          label="Car Wash Request"
+          @click="
+            username.toLowerCase() == 'admin'
+              ? this.$router.push('/admin')
+              : this.$router.push('/user')
+          "
+        />
+        <q-space />
         <q-tabs>
           <q-route-tab to="/about" label="About us" />
           <q-route-tab to="/price" label="Services & Pricing" />
@@ -14,7 +25,7 @@
           v-if="storeLogUser.logInStatus"
           style="background: #ff0080; color: white"
           label="Log out"
-          @click="storeLogUser.logInStatus = false"
+          @click="onLogout"
         />
         <q-btn
           v-else
@@ -32,7 +43,7 @@
             </q-card-section>
 
             <q-card-section class="q-pt-none">
-              <q-form class="q-gutter-md" @submit.prevent="onLoginSubmit">
+              <q-form class="q-gutter-md" @submit.prevent="onSubmit">
                 <div>
                   <q-input
                     v-model="username"
@@ -69,7 +80,7 @@
                 </div>
                 <div>
                   <q-btn
-                    label="Submit"
+                    label="login"
                     color="primary"
                     type="submit"
                     style="width: 100%"
@@ -102,14 +113,14 @@
 <script>
 import { emailValidate, requiredValidate } from "../utils/validations";
 import { useCounterStore } from "../stores/user";
+import { Notify } from "quasar";
 export default {
   name: "LandingLayout",
   data() {
     return {
       showLoginDialog: false,
-      showRegisterDialog: false,
-      username: "",
-      password: "",
+      username: null,
+      password: null,
       isPwd: true,
       storeLogUser: useCounterStore(),
     };
@@ -117,11 +128,30 @@ export default {
   methods: {
     emailValidate,
     requiredValidate,
-    onLoginSubmit() {
-      console.log(this.username);
-      console.log(this.password);
+    onSubmit() {
+      let data = {
+        username: this.username,
+        password: this.password,
+      };
+      console.log(data);
+      this.storeLogUser.username = data.username;
+      this.storeLogUser.password = data.password;
       this.storeLogUser.logInStatus = true;
       this.$refs.loginDialog.hide();
+      Notify.create({
+        type: "positive",
+        message: "Login successfully.",
+      });
+    },
+    onLogout() {
+      this.storeLogUser.logInStatus = false;
+      Notify.create({
+        type: "positive",
+        message: "Logout successfully.",
+      });
+      setTimeout(() => {
+        this.$router.push("/");
+      }, 2000);
     },
   },
 };
