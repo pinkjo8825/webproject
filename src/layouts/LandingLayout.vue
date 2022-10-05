@@ -1,5 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
+
     <q-header reveal elevated class="bg-primary text-white" height-hint="91">
       <q-toolbar>
         <q-btn flat to="/" icon="local_car_wash" label="Car Washing System" />
@@ -142,9 +143,12 @@ export default {
         type: "positive",
         message: "Login successfully.",
       });
+      this.username = "";
+      this.password = "";
     },
     onLogout() {
-      this.storeLogUser.logInStatus = false;
+
+      this.storeLogUser.$reset()
       Notify.create({
         type: "positive",
         message: "Logout successfully.",

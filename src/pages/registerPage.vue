@@ -8,7 +8,7 @@
         </div>
         <div class="flex flex-center" v-else>
           <q-img
-            :src="imageUrl"
+            :src="storeLogUser.imageUrl"
             :ratio="4 / 3"
             spinner-color="primary"
             spinner-size="82px"
@@ -103,7 +103,6 @@ export default {
     return {
       storeLogUser: useCounterStore(),
       isShowIcon: true,
-      imageUrl: null,
       isPwd: true,
       fullname: null,
       email: null,
@@ -128,11 +127,11 @@ export default {
     },
     uploadFile() {
       this.isShowIcon = false;
-      this.imageUrl = URL.createObjectURL(this.upload_avatar);
+      this.storeLogUser.imageUrl = URL.createObjectURL(this.upload_avatar);
     },
     onReset() {
       this.isShowIcon = true;
-      this.imageUrl = null;
+      this.storeLogUser.imageUrl = null;
       this.fullname = null;
       this.email = null;
       this.username = null;

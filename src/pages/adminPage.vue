@@ -2,9 +2,11 @@
   <div v-if="storeLogUser.username != 'admin'" >
     <h1 class="text-red">access denied</h1>
   </div>
-  <div v-else >
-    <h1>admin</h1>
-  </div>
+  <q-page v-else>
+  <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
+      <p>234</p>
+    </q-drawer>
+ </q-page>
 
 </template>
 

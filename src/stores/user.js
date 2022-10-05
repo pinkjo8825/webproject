@@ -9,6 +9,8 @@ export const useCounterStore = defineStore('counter', {
     username: '',
     accessToken: '',
     email: '',
+    imageUrl: "default-avatar.png",
+    listOfRequest: [],
   }),
 
   getters: {
