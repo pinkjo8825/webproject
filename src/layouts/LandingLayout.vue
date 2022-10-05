@@ -95,9 +95,7 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <p>uppper</p>
     <q-footer reveal bordered class="bg-grey-8 text-white"> </q-footer>
-    <hp1>lower</hp1>
   </q-layout>
 </template>
 
