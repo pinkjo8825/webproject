@@ -12,7 +12,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import { useCounterStore } from "../stores/user";
+import { useCounterStore } from "../stores/users";
 export default defineComponent({
   name: "adminPage",
   data() {

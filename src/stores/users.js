@@ -12,11 +12,10 @@ export const useCounterStore = defineStore("counter", {
     doubleCount(state) {
       return state.counter * 2;
     },
-    getImg(state) {
-      return this.users[this.currentIndex].imageUrl;
+    getCurrentUserIndex(state) {
+      return state.currentUsername;
     },
   },
-
   actions: {
     createNewUser(
       username,
@@ -27,8 +26,8 @@ export const useCounterStore = defineStore("counter", {
       const newUser = {
         username: username,
         password: password,
-        requests: requests,
         imageUrl: img,
+        requests: requests,
       };
       this.users.push(newUser);
     },

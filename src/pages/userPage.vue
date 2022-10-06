@@ -35,7 +35,7 @@
                 <q-icon name="pending_actions" />
               </q-item-section>
               <q-item-section>
-                <q-item-label> {{ pendingRequest }}</q-item-label>
+                <!-- <q-item-label>{{}}</q-item-label> -->
                 <q-item-label caption>Pending Request</q-item-label>
               </q-item-section>
             </q-item>
@@ -46,7 +46,7 @@
               </q-item-section>
 
               <q-item-section>
-                <q-item-label> {{ inprocessRequest }}</q-item-label>
+                <!-- <q-item-label> {{ inprocessRequest }}</q-item-label> -->
                 <q-item-label caption>In-process Request</q-item-label>
               </q-item-section>
             </q-item>
@@ -57,37 +57,36 @@
               </q-item-section>
 
               <q-item-section>
-                <q-item-label> {{ finishedRequest }}</q-item-label>
+                <!-- <q-item-label> {{ finishedRequest }}</q-item-label> -->
                 <q-item-label caption>Finished Request</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
         </q-scroll-area>
 
-        <q-img
+        <!-- <q-img
           class="absolute-top"
           src="https://cdn.quasar.dev/img/material.png"
           style="height: 150px"
         >
           <div class="absolute-bottom bg-transparent">
             <q-avatar size="72px" class="q-mb-sm">
-              <img :src="storeLogUser.getImg()" />
+              <img :src="storeLogUser.users[storeLogUser.getCurrentIndex()].imageUrl" />
             </q-avatar>
             <div class="text-weight-bold">{{ storeLogUser.username }}</div>
-            <div>{{ storeLogUser.email }}</div>
           </div>
-        </q-img>
+        </q-img> -->
       </q-drawer>
 
       <q-page-container>
         <q-page padding>
           <div class="q-pa-md column justify-start q-gutter-md">
             <q-card
-              v-for="(value, key) in storeLogUser.listOfRequest"
+              v-for="(value, key) in storeLogUser.users[0].requests"
               :key="key"
             >
               <q-card-section class="bg-primary text-white">
-                <div class="text-h6">{{ value.licensePlate }}</div>
+                <div class="text-h6">{{value.licensePlate}}</div>
                 <div class="text-subtitle2">
                   {{ value.carType }} {{ value.clean }}
                 </div>
@@ -258,7 +257,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import { useCounterStore } from "../stores/user";
+import { useCounterStore } from "../stores/users";
 export default defineComponent({
   name: "userPage",
   data() {
@@ -273,14 +272,22 @@ export default defineComponent({
     };
   },
   methods: {
+    userIndex() {
+      let a =  this.storeLogUser.currentUsername;
+      let text = this.storeLogUser.getCurrentUserIndex(a);
+      console.log(text);
+
+    },
     onSubmit() {
-      let newObj = {
+      let newRequest = {
         licensePlate: this.licensePlate,
         carType: this.carType,
         clean: this.clean,
         additionServices: this.additionServices,
+        status: "pending",
       };
-      this.storeLogUser.listOfRequest.push(newObj);
+      let a = this.userIndex();
+      this.storeLogUser.users[0].requests.push(newRequest);
       this.$refs.newRequestDialogref.hide();
       this.licensePlate = "";
       this.carType = "car";

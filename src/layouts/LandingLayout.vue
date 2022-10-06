@@ -16,10 +16,7 @@
           "
         />
         <q-space />
-        <q-tabs>
-          <q-route-tab to="/about" label="About us" />
-          <q-route-tab to="/price" label="Services & Pricing" />
-        </q-tabs>
+
 
         <q-btn
           v-if="storeLogUser.logInStatus"
@@ -116,7 +113,7 @@
 
 <script>
 import { emailValidate, requiredValidate } from "../utils/validations";
-import { useCounterStore } from "../stores/user";
+import { useCounterStore } from "../stores/users";
 import { Notify } from "quasar";
 export default {
   name: "LandingLayout",

@@ -95,7 +95,8 @@
 </template>
 <script>
 import { emailValidate, requiredValidate } from "../utils/validations";
-import { useCounterStore } from "../stores/user";
+import { useCounterStore } from "../stores/users";
+
 import { Notify } from "quasar";
 export default {
   name: "registerPage",
@@ -109,7 +110,7 @@ export default {
       username: null,
       password: null,
       upload_avatar: null,
-      imageUrl: 'default-avatar.png',
+      imageUrl: "default-avatar.png",
     };
   },
   methods: {
@@ -132,7 +133,7 @@ export default {
     },
     onReset() {
       this.isShowIcon = true;
-      this.imageUrl = 'default-avatar.png';
+      this.imageUrl = "default-avatar.png";
       this.fullname = null;
       this.email = null;
       this.username = null;
@@ -140,14 +141,34 @@ export default {
       this.upload_avatar = null;
     },
     onSubmit() {
-      this.storeLogUser.createNewUser(this.username,this.password,this.imageUrl);
-      Notify.create({
-        type: "position",
-        message: "create an account successfully.",
-      });
-      setTimeout(() => {
-        this.$router.push("/");
-      }, 2000);
+      let exist = false;
+      for (let user of this.storeLogUser.users) {
+        if (user.username === this.username) {
+          exist = true;
+        }
+      }
+
+      if (exist) {
+        this.onReset();
+        this.$refs.registerForm.reset();
+        Notify.create({
+          type: "negative",
+          message: "Username already exists",
+        });
+      } else {
+        this.storeLogUser.createNewUser(
+          this.username,
+          this.password,
+          this.imageUrl
+        );
+        Notify.create({
+          type: "position",
+          message: "create an account successfully.",
+        });
+        setTimeout(() => {
+          this.$router.push("/");
+        }, 2000);
+      }
     },
   },
 };
