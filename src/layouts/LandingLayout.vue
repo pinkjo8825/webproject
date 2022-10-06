@@ -1,6 +1,5 @@
 <template>
   <q-layout view="hHh lpR fFf">
-
     <q-header reveal elevated class="bg-primary text-white" height-hint="91">
       <q-toolbar>
         <q-btn flat to="/" icon="local_car_wash" label="Car Washing System" />
@@ -11,7 +10,7 @@
           v-if="storeLogUser.logInStatus"
           label="Car Wash Request"
           @click="
-            username.toLowerCase() == 'admin'
+            storeLogUser.currentUsername.toLowerCase() == 'admin'
               ? this.$router.push('/admin')
               : this.$router.push('/user')
           "
@@ -44,7 +43,11 @@
             </q-card-section>
 
             <q-card-section class="q-pt-none">
-              <q-form class="q-gutter-md" @submit.prevent="onSubmit">
+              <q-form
+                class="q-gutter-md"
+                @submit.prevent="onSubmit"
+                ref="loginForm"
+              >
                 <div>
                   <q-input
                     v-model="username"
@@ -130,25 +133,38 @@ export default {
     emailValidate,
     requiredValidate,
     onSubmit() {
-      let data = {
-        username: this.username,
-        password: this.password,
-      };
-      console.log(data);
-      this.storeLogUser.username = data.username;
-      this.storeLogUser.password = data.password;
-      this.storeLogUser.logInStatus = true;
-      this.$refs.loginDialog.hide();
-      Notify.create({
-        type: "positive",
-        message: "Login successfully.",
-      });
-      this.username = "";
-      this.password = "";
+      let success = false;
+      for (const user of this.storeLogUser.users) {
+        if (user.username == this.username && user.password == this.password) {
+          success = true;
+        }
+      }
+      if (success) {
+        this.storeLogUser.logInStatus = true;
+        this.storeLogUser.currentUsername = this.username;
+        this.storeLogUser.currentIndex = this.storeLogUser.users.length - 1;
+        this.$refs.loginDialog.hide();
+        Notify.create({
+          type: "positive",
+          message: "Login successfully.",
+        });
+      } else {
+        Notify.create({
+          type: "negative",
+          message: "Wrong username or password",
+        });
+
+        this.$refs.loginForm.reset();
+      }
+      this.username = null;
+      this.password = null;
     },
     onLogout() {
+      console.log("tes");
+      this.storeLogUser.logInStatus = false;
+      this.storeLogUser.currentUsername = '';
+      this.storeLogUser.currentIndex = null;
 
-      this.storeLogUser.$reset()
       Notify.create({
         type: "positive",
         message: "Logout successfully.",

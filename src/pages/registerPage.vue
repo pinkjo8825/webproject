@@ -8,7 +8,7 @@
         </div>
         <div class="flex flex-center" v-else>
           <q-img
-            :src="storeLogUser.imageUrl"
+            :src="imageUrl"
             :ratio="4 / 3"
             spinner-color="primary"
             spinner-size="82px"
@@ -109,6 +109,7 @@ export default {
       username: null,
       password: null,
       upload_avatar: null,
+      imageUrl: 'default-avatar.png',
     };
   },
   methods: {
@@ -127,11 +128,11 @@ export default {
     },
     uploadFile() {
       this.isShowIcon = false;
-      this.storeLogUser.imageUrl = URL.createObjectURL(this.upload_avatar);
+      this.imageUrl = URL.createObjectURL(this.upload_avatar);
     },
     onReset() {
       this.isShowIcon = true;
-      this.storeLogUser.imageUrl = null;
+      this.imageUrl = 'default-avatar.png';
       this.fullname = null;
       this.email = null;
       this.username = null;
@@ -139,17 +140,11 @@ export default {
       this.upload_avatar = null;
     },
     onSubmit() {
-      let data = {
-        fullname: this.fullname,
-        email: this.email,
-        username: this.username,
-        password: this.password,
-      };
+      this.storeLogUser.createNewUser(this.username,this.password,this.imageUrl);
       Notify.create({
         type: "position",
         message: "create an account successfully.",
       });
-      console.log(data);
       setTimeout(() => {
         this.$router.push("/");
       }, 2000);

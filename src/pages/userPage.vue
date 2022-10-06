@@ -1,5 +1,8 @@
 <template>
-  <div class="q-pa-md">
+  <div v-if="!storeLogUser.logInStatus">
+    <h1 class="text-red">access denied</h1>
+  </div>
+  <div v-else class="q-pa-md">
     <q-layout
       view="lHh Lpr lff"
       container
@@ -12,7 +15,7 @@
           <q-btn
             color="red"
             icon="add_circle"
-            @click="newReguestDialog = true"
+            @click="this.newRequestDialog = true"
             label="Make new request"
           />
         </q-toolbar>
@@ -27,36 +30,36 @@
           "
         >
           <q-list padding>
-            <q-item clickable v-ripple>
+            <q-item>
               <q-item-section avatar>
-                <q-icon name="inbox" />
+                <q-icon name="pending_actions" />
               </q-item-section>
-
-              <q-item-section> Inbox </q-item-section>
+              <q-item-section>
+                <q-item-label> {{ pendingRequest }}</q-item-label>
+                <q-item-label caption>Pending Request</q-item-label>
+              </q-item-section>
             </q-item>
 
-            <q-item active clickable v-ripple>
+            <q-item>
               <q-item-section avatar>
-                <q-icon name="star" />
+                <q-icon name="loop" />
               </q-item-section>
 
-              <q-item-section> Star </q-item-section>
+              <q-item-section>
+                <q-item-label> {{ inprocessRequest }}</q-item-label>
+                <q-item-label caption>In-process Request</q-item-label>
+              </q-item-section>
             </q-item>
 
-            <q-item clickable v-ripple>
+            <q-item>
               <q-item-section avatar>
-                <q-icon name="send" />
+                <q-icon name="check_circle_outline" />
               </q-item-section>
 
-              <q-item-section> Send </q-item-section>
-            </q-item>
-
-            <q-item clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon name="drafts" />
+              <q-item-section>
+                <q-item-label> {{ finishedRequest }}</q-item-label>
+                <q-item-label caption>Finished Request</q-item-label>
               </q-item-section>
-
-              <q-item-section> Drafts </q-item-section>
             </q-item>
           </q-list>
         </q-scroll-area>
@@ -68,7 +71,7 @@
         >
           <div class="absolute-bottom bg-transparent">
             <q-avatar size="72px" class="q-mb-sm">
-              <img :src="storeLogUser.imageUrl" />
+              <img :src="storeLogUser.getImg()" />
             </q-avatar>
             <div class="text-weight-bold">{{ storeLogUser.username }}</div>
             <div>{{ storeLogUser.email }}</div>
@@ -78,13 +81,35 @@
 
       <q-page-container>
         <q-page padding>
-          <div v-for="request in storeLogUser.listOfRequest" :key="request.id">
-            {{request.username}}
+          <div class="q-pa-md column justify-start q-gutter-md">
+            <q-card
+              v-for="(value, key) in storeLogUser.listOfRequest"
+              :key="key"
+            >
+              <q-card-section class="bg-primary text-white">
+                <div class="text-h6">{{ value.licensePlate }}</div>
+                <div class="text-subtitle2">
+                  {{ value.carType }} {{ value.clean }}
+                </div>
+                <span
+                  v-for="service in value.additionServices"
+                  :key="service.key"
+                  >{{ service }},
+                </span>
+              </q-card-section>
+
+              <q-separator />
+
+              <q-card-actions align="right">
+                <q-btn flat>Action 1</q-btn>
+                <q-btn flat>Action 2</q-btn>
+              </q-card-actions>
+            </q-card>
           </div>
         </q-page>
       </q-page-container>
 
-      <q-dialog v-model="newReguestDialog" full-width ref="newRequestDialogref">
+      <q-dialog v-model="newRequestDialog" full-width ref="newRequestDialogref">
         <q-card>
           <q-card-section>
             <q-toolbar>
@@ -174,15 +199,15 @@
               <p class="text-h6 q-pt-xs q-mb-none">Clean</p>
               <q-btn-toggle
                 class="q-mb-none"
-                v-model="cleanOutsideOnly"
+                v-model="clean"
                 spread
                 no-caps
                 toggle-color="purple"
                 color="white"
                 text-color="black"
                 :options="[
-                  { label: 'Outside Only', value: true },
-                  { label: 'Inside and Outsite', value: false },
+                  { label: 'Outside Only', value: 'outsideOnly' },
+                  { label: 'Inside and Outsite', value: 'insideAndOutsite' },
                 ]"
               />
               <p class="text-h6 q-pt-xs q-mb-none">Addition Services</p>
@@ -234,20 +259,16 @@
 <script>
 import { defineComponent } from "vue";
 import { useCounterStore } from "../stores/user";
-import { requestComponent } from "../components/requestComponent.vue";
 export default defineComponent({
   name: "userPage",
-  // components: {
-  //   requestComponent,
-  // },
   data() {
     return {
       leftDrawerOpen: true,
-      newReguestDialog: false,
+      newRequestDialog: false,
       storeLogUser: useCounterStore(),
       licensePlate: "",
       carType: "car",
-      cleanOutsideOnly: true,
+      clean: "outsideOnly",
       additionServices: [],
     };
   },
@@ -256,14 +277,14 @@ export default defineComponent({
       let newObj = {
         licensePlate: this.licensePlate,
         carType: this.carType,
-        cleanOutsideOnly: this.cleanOutsideOnly,
+        clean: this.clean,
         additionServices: this.additionServices,
       };
       this.storeLogUser.listOfRequest.push(newObj);
       this.$refs.newRequestDialogref.hide();
       this.licensePlate = "";
       this.carType = "car";
-      this.cleanOutsideOnly = true;
+      this.clean = "outsideOnly";
       this.additionServices = [];
     },
   },
