@@ -35,7 +35,10 @@
                 <q-icon name="pending_actions" />
               </q-item-section>
               <q-item-section>
-                <!-- <q-item-label>{{}}</q-item-label> -->
+                <q-item-label>{{
+                  this.storeLogUser.users[this.storeLogUser.getCurrentUserIndex]
+                    .requestsType[0]
+                }}</q-item-label>
                 <q-item-label caption>Pending Request</q-item-label>
               </q-item-section>
             </q-item>
@@ -46,7 +49,10 @@
               </q-item-section>
 
               <q-item-section>
-                <!-- <q-item-label> {{ inprocessRequest }}</q-item-label> -->
+                <q-item-label>{{
+                  this.storeLogUser.users[this.storeLogUser.getCurrentUserIndex]
+                    .requestsType[1]
+                }}</q-item-label>
                 <q-item-label caption>In-process Request</q-item-label>
               </q-item-section>
             </q-item>
@@ -57,36 +63,45 @@
               </q-item-section>
 
               <q-item-section>
-                <!-- <q-item-label> {{ finishedRequest }}</q-item-label> -->
+                <q-item-label>{{
+                  this.storeLogUser.users[this.storeLogUser.getCurrentUserIndex]
+                    .requestsType[2]
+                }}</q-item-label>
                 <q-item-label caption>Finished Request</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
         </q-scroll-area>
 
-        <!-- <q-img
+        <q-img
           class="absolute-top"
           src="https://cdn.quasar.dev/img/material.png"
           style="height: 150px"
         >
           <div class="absolute-bottom bg-transparent">
             <q-avatar size="72px" class="q-mb-sm">
-              <img :src="storeLogUser.users[storeLogUser.getCurrentIndex()].imageUrl" />
+              <img
+                :src="
+                  storeLogUser.users[storeLogUser.getCurrentUserIndex].imageUrl
+                "
+              />
             </q-avatar>
-            <div class="text-weight-bold">{{ storeLogUser.username }}</div>
+            <div class="text-weight-bold">
+              {{ storeLogUser.currentUsername }}
+            </div>
           </div>
-        </q-img> -->
+        </q-img>
       </q-drawer>
 
       <q-page-container>
         <q-page padding>
           <div class="q-pa-md column justify-start q-gutter-md">
             <q-card
-              v-for="(value, key) in storeLogUser.users[0].requests"
-              :key="key"
+              v-for="(value, index) of storeLogUser.users[storeLogUser.getCurrentUserIndex].requests"
+              :key="index"
             >
               <q-card-section class="bg-primary text-white">
-                <div class="text-h6">{{value.licensePlate}}</div>
+                <div class="text-h6">{{ value.licensePlate }}</div>
                 <div class="text-subtitle2">
                   {{ value.carType }} {{ value.clean }}
                 </div>
@@ -100,14 +115,64 @@
               <q-separator />
 
               <q-card-actions align="right">
-                <q-btn flat>Action 1</q-btn>
-                <q-btn flat>Action 2</q-btn>
+                <div class="text-subtitle1 text-weight-medium">
+                  {{ value.status }}
+                </div>
+                <q-space />
+                <q-btn
+                  color="secondary"
+                  v-if="value.status === 'pending'"
+                  @click="() => {paymentDialog = true;
+                  this.currentRequest = index}"
+                  >Payment</q-btn
+                >
               </q-card-actions>
             </q-card>
           </div>
         </q-page>
       </q-page-container>
+      <q-dialog v-model="paymentDialog" ref="paymentDialogref">
+        <q-card>
+          <q-card-section>
+            <q-toolbar>
+              <q-toolbar-title>Choose payment methods</q-toolbar-title>
+            </q-toolbar>
+          </q-card-section>
+            <q-btn-toggle
+            spread
+              label="Car type"
+              v-model="carType"
+              toggle-color="purple"
+              :options="[
+                { value: 'cash', slot: 'one' },
+                { value: 'card', slot: 'two' },
+              ]"
+            >
+              <template v-slot:one>
+                <div class="row items-center no-wrap">
+                  <q-icon name="local_atm" />
+                  <div class="text-center">Cash</div>
+                </div>
+              </template>
 
+              <template v-slot:two>
+                <div class="row items-center no-wrap">
+                  <q-icon name="credit_card" />
+                  <div class="text-center">Credit Card</div>
+                </div>
+              </template>
+            </q-btn-toggle>
+          <q-separator />
+          <q-card-actions align="right">
+                <q-btn flat label="Decline" color="primary" v-close-popup />
+                <q-btn label="Sumbit" v-close-popup @click="() => {
+                  storeLogUser.users[storeLogUser.getCurrentUserIndex].requestsType[0]--;
+                  storeLogUser.users[storeLogUser.getCurrentUserIndex].requestsType[1]++;
+                  storeLogUser.users[storeLogUser.getCurrentUserIndex].requests[currentRequest].status = 'inProcess';
+                }" color="primary" />
+              </q-card-actions>
+        </q-card>
+      </q-dialog>
       <q-dialog v-model="newRequestDialog" full-width ref="newRequestDialogref">
         <q-card>
           <q-card-section>
@@ -258,26 +323,25 @@
 <script>
 import { defineComponent } from "vue";
 import { useCounterStore } from "../stores/users";
+const store = useCounterStore();
 export default defineComponent({
   name: "userPage",
   data() {
     return {
       leftDrawerOpen: true,
       newRequestDialog: false,
-      storeLogUser: useCounterStore(),
+      paymentDialog: false,
+      storeLogUser: store,
       licensePlate: "",
       carType: "car",
       clean: "outsideOnly",
       additionServices: [],
+      currentIndex: null,
+      requestStatus: null,
+      currentRequest: null,
     };
   },
   methods: {
-    userIndex() {
-      let a =  this.storeLogUser.currentUsername;
-      let text = this.storeLogUser.getCurrentUserIndex(a);
-      console.log(text);
-
-    },
     onSubmit() {
       let newRequest = {
         licensePlate: this.licensePlate,
@@ -286,8 +350,11 @@ export default defineComponent({
         additionServices: this.additionServices,
         status: "pending",
       };
-      let a = this.userIndex();
-      this.storeLogUser.users[0].requests.push(newRequest);
+      this.storeLogUser.users[this.storeLogUser.getCurrentUserIndex]
+        .requestsType[0]++;
+      this.storeLogUser.users[
+        this.storeLogUser.getCurrentUserIndex
+      ].requests.push(newRequest);
       this.$refs.newRequestDialogref.hide();
       this.licensePlate = "";
       this.carType = "car";

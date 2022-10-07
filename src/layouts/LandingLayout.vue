@@ -157,7 +157,6 @@ export default {
       this.password = null;
     },
     onLogout() {
-      console.log("tes");
       this.storeLogUser.logInStatus = false;
       this.storeLogUser.currentUsername = '';
       this.storeLogUser.currentIndex = null;
