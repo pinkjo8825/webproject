@@ -99,45 +99,50 @@
               ].requests"
               :key="index"
             >
-              <q-card-section class="bg-primary text-white">
-                <div class="text-h6">{{ value.licensePlate }}</div>
-                <div class="text-subtitle2">
-                  {{ value.carType }} {{ value.clean }}
-                </div>
-                <span
-                  v-for="service in value.additionServices"
-                  :key="service.key"
-                  >{{ service }},
-                </span>
-              </q-card-section>
+              <div v-if="value.visible">
+                <q-card-section class="bg-primary text-white">
+                  <div class="text-h6">{{ value.licensePlate }}</div>
+                  <div class="text-subtitle2">
+                    {{ value.carType }} {{ value.clean }}
+                  </div>
+                  <span
+                    v-for="service in value.additionServices"
+                    :key="service.key"
+                    >{{ service }},
+                  </span>
+                </q-card-section>
 
-              <q-separator />
+                <q-separator />
 
-              <q-card-actions
-                class="text-subtitle1 text-weight-medium"
-                align="right"
-              >
-                <div>
-                  {{ value.status }}
-                </div>
-
-                <q-space />
-
-                Price:<span class="text-purple">{{ calPrice(value) }}</span>
-
-                <q-btn
-                  class="q-ml-md"
-                  color="secondary"
-                  v-if="value.status === 'pending'"
-                  @click="
-                    () => {
-                      paymentDialog = true;
-                      this.currentRequest = index;
-                    }
-                  "
-                  >Payment</q-btn
+                <q-card-actions
+                  class="text-subtitle1 text-weight-medium"
+                  align="right"
                 >
-              </q-card-actions>
+                  <div>
+                    {{ value.status }}
+                  </div>
+
+                  <q-space />
+
+                  Price:<span class="text-purple">{{ calPrice(value) }}</span>
+
+                  <q-btn
+                    class="q-ml-md"
+                    color="secondary"
+                    v-if="value.status === 'pending'"
+                    @click="
+                      () => {
+                        paymentDialog = true;
+                        this.currentRequest = index;
+                      }
+                    "
+                    >Payment</q-btn
+                  >
+                </q-card-actions>
+              </div>
+              <div v-else>
+                hide
+              </div>
             </q-card>
           </div>
         </q-page>
@@ -415,6 +420,7 @@ export default defineComponent({
         clean: this.clean,
         additionServices: this.additionServices,
         status: "pending",
+        visible: true,
       };
       this.storeLogUser.users[
         this.storeLogUser.getCurrentUserIndex

@@ -11,7 +11,7 @@
 <script>
 import { defineComponent } from "vue";
 import { useCounterStore } from "../stores/users";
-const fuxk = useCounterStore();
+const store = useCounterStore();
 export default defineComponent({
   name: "IndexPage",
   data() {
@@ -60,10 +60,10 @@ export default defineComponent({
     },
   },
   setup() {
-    if (fuxk.users < 1) {
-      fuxk.createNewUser("admin", "123456789");
-      fuxk.createNewUser("john", "123456789");
-      fuxk.createNewUser("net", "123456789");
+    if (store.users < 1) {
+      store.createNewUser("admin", "123456789");
+      store.createNewUser("john", "123456789");
+      store.createNewUser("net", "123456789");
     }
   },
 });

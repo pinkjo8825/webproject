@@ -77,8 +77,8 @@
         >
           <q-card v-for="value of user.requests" :key="value.id">
             <q-card-section class="bg-primary text-white">
-              <div class="flex justify-between">
-                <span class="text-h6">{{ value.licensePlate }}</span>
+              <div class=" text-h6 flex justify-between">
+                <span>{{ value.licensePlate }}</span>
                 <span> {{ user.username }}</span>
               </div>
               <div class="text-subtitle2">
@@ -94,6 +94,11 @@
             <q-card-actions align="right">
               <div class="text-subtitle1 text-weight-medium">
                 {{ value.status }}
+              </div>
+              <div class="q-ml-xl">
+                visible for user:<span class="text-purple">{{
+                  value.visible
+                }}</span>
               </div>
               <q-space />
               <div class="q-gutter-sm">
@@ -122,13 +127,140 @@
               <div class="q-ml-md">
                 Price:<span class="text-purple">{{ calPrice(value) }}</span>
               </div>
-              <q-btn
-                class="q-ml-sm"
-                color="secondary"
-                label="Edit"
-                icon-right="settings"
-              />
             </q-card-actions>
+            <q-separator/>
+            <q-form>
+                  <p class="text-h6 q-pt-xs q-mb-none">License plate</p>
+                  <q-input
+                    outlined
+                    v-model="value.licensePlate"
+                    label="license plate"
+                  />
+
+                  <div>
+                    <p class="text-h6 q-pt-xs q-mb-none">Car type</p>
+                    <q-btn-toggle
+                      label="Car type"
+                      v-model="value.carType"
+                      toggle-color="purple"
+                      :options="[
+                        { value: 'car', slot: 'one' },
+                        { value: 'suvAvg', slot: 'two' },
+                        { value: 'suvL', slot: 'three' },
+                        { value: 'pickUpS', slot: 'four' },
+                        { value: 'pickUpL', slot: 'five' },
+                        { value: 'pickUpXL', slot: 'six' },
+                        { value: 'taxi', slot: 'seven' },
+                      ]"
+                    >
+                      <template v-slot:one>
+                        <div class="row items-center no-wrap">
+                          <q-icon name="directions_car" />
+                          <div class="text-center">Car</div>
+                        </div>
+                      </template>
+
+                      <template v-slot:two>
+                        <div class="row items-center no-wrap">
+                          <q-icon name="airport_shuttle" />
+                          <div class="text-center">SUV Average</div>
+                        </div>
+                      </template>
+
+                      <template v-slot:three>
+                        <div class="row items-center no-wrap">
+                          <q-icon name="airport_shuttle" />
+                          <div class="text-center">SUV Large</div>
+                        </div>
+                      </template>
+
+                      <template v-slot:four>
+                        <div class="row items-center no-wrap">
+                          <q-icon name="local_shipping" />
+                          <div class="text-center">Pick-up Small</div>
+                        </div>
+                      </template>
+                      <template v-slot:five>
+                        <div class="row items-center no-wrap">
+                          <q-icon name="local_shipping" />
+                          <div class="text-center">Pick-up Large</div>
+                        </div>
+                      </template>
+                      <template v-slot:six>
+                        <div class="row items-center no-wrap">
+                          <q-icon name="local_shipping" />
+                          <div class="text-center">Pick-up XL</div>
+                        </div>
+                      </template>
+                      <template v-slot:seven>
+                        <div class="row items-center no-wrap">
+                          <q-icon name="local_taxi" />
+                          <div class="text-center">Taxi</div>
+                        </div>
+                      </template>
+                    </q-btn-toggle>
+                  </div>
+                  <p class="text-h6 q-pt-xs q-mb-none">Clean</p>
+                  <q-btn-toggle
+                    class="q-mb-none"
+                    v-model="value.clean"
+                    spread
+                    no-caps
+                    toggle-color="purple"
+                    color="white"
+                    text-color="black"
+                    :options="[
+                      { label: 'Outside Only', value: 'outsideOnly' },
+                      {
+                        label: 'Inside and Outsite',
+                        value: 'insideAndOutsite',
+                      },
+                    ]"
+                  />
+                  <p class="text-h6 q-pt-xs q-mb-none">Addition Services</p>
+                  <div class="q-gutter-sm">
+                    <q-checkbox
+                      v-model="value.additionServices"
+                      val="hardWax"
+                      label="Hard Wax"
+                      color="green"
+                    />
+                    <q-checkbox
+                      v-model="value.additionServices"
+                      val="scratchRemoval"
+                      label="Scratch Removal"
+                      color="green"
+                    />
+                    <q-checkbox
+                      v-model="value.additionServices"
+                      val="carpetShampooing"
+                      label="Carpet Shampooing"
+                      color="green"
+                    />
+                    <q-checkbox
+                      v-model="value.additionServices"
+                      val="waterSpotRemoval"
+                      label="Water Spot Removal"
+                      color="green"
+                    />
+                    <q-checkbox
+                      v-model="value.additionServices"
+                      val="paintRestoration"
+                      label="Paint Restoration"
+                      color="green"
+                    />
+                  </div>
+                  <div class="q-gutter-sm">
+                    <q-toggle
+                      v-model="value.visible"
+                      color="green"
+                      label="Set visible for user:"
+                      left-label
+                    />
+                  </div>
+
+                </q-form>
+
           </q-card>
         </div>
       </q-page-container>
@@ -139,7 +271,6 @@
 <script>
 import { defineComponent } from "vue";
 import { useCounterStore } from "../stores/users";
-const store = useCounterStore();
 export default defineComponent({
   name: "adminPage",
   data() {
