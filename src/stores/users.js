@@ -5,12 +5,14 @@ export const useCounterStore = defineStore("counter", {
     users: [],
     logInStatus: false,
     currentUsername: "",
+    currentIndex: "",
   }),
   getters: {
     getCurrentUserIndex(state) {
       const index = state.users
         .map((e) => e.username)
         .indexOf(this.currentUsername);
+      this.currentIndex = index;
       return index;
     },
   },
@@ -20,14 +22,12 @@ export const useCounterStore = defineStore("counter", {
       password,
       img = "default-avatar.png",
       requests = [],
-      requestsType = [0, 0, 0]
     ) {
       const newUser = {
         username: username,
         password: password,
         imageUrl: img,
         requests: requests,
-        requestsType: requestsType,
       };
       this.users.push(newUser);
     },

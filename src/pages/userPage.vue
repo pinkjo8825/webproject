@@ -36,8 +36,7 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{
-                  this.storeLogUser.users[this.storeLogUser.getCurrentUserIndex]
-                    .requestsType[0]
+                  getCurrentUserRequestType()[0]
                 }}</q-item-label>
                 <q-item-label caption>Pending Request</q-item-label>
               </q-item-section>
@@ -50,10 +49,9 @@
 
               <q-item-section>
                 <q-item-label>{{
-                  this.storeLogUser.users[this.storeLogUser.getCurrentUserIndex]
-                    .requestsType[1]
+                  getCurrentUserRequestType()[1]
                 }}</q-item-label>
-                <q-item-label caption>In-process Request</q-item-label>
+                <q-item-label caption>In-process Reques</q-item-label>
               </q-item-section>
             </q-item>
 
@@ -64,8 +62,7 @@
 
               <q-item-section>
                 <q-item-label>{{
-                  this.storeLogUser.users[this.storeLogUser.getCurrentUserIndex]
-                    .requestsType[2]
+                  getCurrentUserRequestType()[2]
                 }}</q-item-label>
                 <q-item-label caption>Finished Request</q-item-label>
               </q-item-section>
@@ -97,7 +94,9 @@
         <q-page padding>
           <div class="q-pa-md column justify-start q-gutter-md">
             <q-card
-              v-for="(value, index) of storeLogUser.users[storeLogUser.getCurrentUserIndex].requests"
+              v-for="(value, index) of storeLogUser.users[
+                storeLogUser.getCurrentUserIndex
+              ].requests"
               :key="index"
             >
               <q-card-section class="bg-primary text-white">
@@ -114,16 +113,28 @@
 
               <q-separator />
 
-              <q-card-actions align="right">
-                <div class="text-subtitle1 text-weight-medium">
+              <q-card-actions
+                class="text-subtitle1 text-weight-medium"
+                align="right"
+              >
+                <div>
                   {{ value.status }}
                 </div>
+
                 <q-space />
+
+                Price:<span class="text-purple">{{ calPrice(value) }}</span>
+
                 <q-btn
+                  class="q-ml-md"
                   color="secondary"
                   v-if="value.status === 'pending'"
-                  @click="() => {paymentDialog = true;
-                  this.currentRequest = index}"
+                  @click="
+                    () => {
+                      paymentDialog = true;
+                      this.currentRequest = index;
+                    }
+                  "
                   >Payment</q-btn
                 >
               </q-card-actions>
@@ -138,39 +149,50 @@
               <q-toolbar-title>Choose payment methods</q-toolbar-title>
             </q-toolbar>
           </q-card-section>
-            <q-btn-toggle
+          <q-btn-toggle
             spread
-              label="Car type"
-              v-model="paymentType"
-              toggle-color="purple"
-              :options="[
-                { value: 'cash', slot: 'one' },
-                { value: 'card', slot: 'two' },
-              ]"
-            >
-              <template v-slot:one>
-                <div class="row items-center no-wrap">
-                  <q-icon name="local_atm" />
-                  <div class="text-center">Cash</div>
-                </div>
-              </template>
+            label="Car type"
+            v-model="paymentType"
+            toggle-color="purple"
+            :options="[
+              { value: 'cash', slot: 'one' },
+              { value: 'card', slot: 'two' },
+            ]"
+          >
+            <template v-slot:one>
+              <div class="row items-center no-wrap">
+                <q-icon name="local_atm" />
+                <div class="text-center">Cash</div>
+              </div>
+            </template>
 
-              <template v-slot:two>
-                <div class="row items-center no-wrap">
-                  <q-icon name="credit_card" />
-                  <div class="text-center">Credit Card</div>
-                </div>
-              </template>
-            </q-btn-toggle>
+            <template v-slot:two>
+              <div class="row items-center no-wrap">
+                <q-icon name="credit_card" />
+                <div class="text-center">Credit Card</div>
+              </div>
+            </template>
+          </q-btn-toggle>
           <q-separator />
           <q-card-actions align="right">
-                <q-btn flat label="Decline" color="primary" v-close-popup />
-                <q-btn label="Sumbit" v-close-popup @click="() => {
-                  storeLogUser.users[storeLogUser.getCurrentUserIndex].requestsType[0]--;
-                  storeLogUser.users[storeLogUser.getCurrentUserIndex].requestsType[1]++;
-                  storeLogUser.users[storeLogUser.getCurrentUserIndex].requests[currentRequest].status = 'inProcess';
-                }" color="primary" />
-              </q-card-actions>
+            <q-btn flat label="Decline" color="primary" v-close-popup />
+            <q-btn
+              label="Sumbit"
+              v-close-popup
+              @click="
+                () => {
+                  storeLogUser.users[storeLogUser.getCurrentUserIndex]
+                    .requestsType[0]--;
+                  storeLogUser.users[storeLogUser.getCurrentUserIndex]
+                    .requestsType[1]++;
+                  storeLogUser.users[storeLogUser.getCurrentUserIndex].requests[
+                    currentRequest
+                  ].status = 'inProcess';
+                }
+              "
+              color="primary"
+            />
+          </q-card-actions>
         </q-card>
       </q-dialog>
       <q-dialog v-model="newRequestDialog" full-width ref="newRequestDialogref">
@@ -339,10 +361,53 @@ export default defineComponent({
       currentIndex: null,
       requestStatus: null,
       currentRequest: null,
-      paymentType: 'cash',
+      paymentType: "cash",
     };
   },
   methods: {
+    getCurrentUserRequestType() {
+      let arr = [0, 0, 0];
+      for (let user of this.storeLogUser.users) {
+        if (user.username === this.storeLogUser.currentUsername) {
+          for (let request of user.requests) {
+            if (request.status === "pending") {
+              arr[0]++;
+            }
+            if (request.status === "inProcess") {
+              arr[1]++;
+            }
+            if (request.status === "finish") {
+              arr[2]++;
+            }
+          }
+        }
+      }
+      return arr;
+    },
+    calPrice(value) {
+      let sum = 0;
+      if (value.clean === "outsideOnly") {
+        if (value.carType === "car") sum += 12;
+        if (value.carType === "suvAvg") sum += 15;
+        if (value.carType === "suvL") sum += 20;
+        if (value.carType === "pickUpS") sum += 15;
+        if (value.carType === "pickUpL") sum += 20;
+        if (value.carType === "pickUpXL") sum += 25;
+        if (value.carType === "taxi") sum += 20;
+      } else {
+        if (value.carType === "car") sum += 20;
+        if (value.carType === "suvAvg") sum += 25;
+        if (value.carType === "suvL") sum += 30;
+        if (value.carType === "pickUpS") sum += 25;
+        if (value.carType === "pickUpL") sum += 30;
+        if (value.carType === "pickUpXL") sum += 35;
+        if (value.carType === "taxi") sum += 30;
+      }
+      for (let service of value.additionServices) {
+        sum += 5;
+      }
+      return sum;
+    },
     onSubmit() {
       let newRequest = {
         licensePlate: this.licensePlate,
@@ -351,8 +416,6 @@ export default defineComponent({
         additionServices: this.additionServices,
         status: "pending",
       };
-      this.storeLogUser.users[this.storeLogUser.getCurrentUserIndex]
-        .requestsType[0]++;
       this.storeLogUser.users[
         this.storeLogUser.getCurrentUserIndex
       ].requests.push(newRequest);
