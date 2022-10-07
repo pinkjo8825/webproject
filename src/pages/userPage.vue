@@ -129,6 +129,7 @@
                   <q-btn
                     class="q-ml-md"
                     color="secondary"
+                    label="Payment"
                     v-if="value.status === 'pending'"
                     @click="
                       () => {
@@ -136,18 +137,13 @@
                         this.currentRequest = index;
                       }
                     "
-                    >Payment</q-btn
-                  >
+                    />
                 </q-card-actions>
               </div>
               <div v-else>
                 hide
               </div>
-            </q-card>
-          </div>
-        </q-page>
-      </q-page-container>
-      <q-dialog v-model="paymentDialog" ref="paymentDialogref">
+              <q-dialog v-model="paymentDialog" ref="paymentDialogref">
         <q-card>
           <q-card-section>
             <q-toolbar>
@@ -184,22 +180,17 @@
             <q-btn
               label="Sumbit"
               v-close-popup
-              @click="
-                () => {
-                  storeLogUser.users[storeLogUser.getCurrentUserIndex]
-                    .requestsType[0]--;
-                  storeLogUser.users[storeLogUser.getCurrentUserIndex]
-                    .requestsType[1]++;
-                  storeLogUser.users[storeLogUser.getCurrentUserIndex].requests[
-                    currentRequest
-                  ].status = 'inProcess';
-                }
-              "
+              @click="value.status = 'inProcess'"
               color="primary"
             />
           </q-card-actions>
         </q-card>
       </q-dialog>
+            </q-card>
+          </div>
+        </q-page>
+      </q-page-container>
+
       <q-dialog v-model="newRequestDialog" full-width ref="newRequestDialogref">
         <q-card>
           <q-card-section>
