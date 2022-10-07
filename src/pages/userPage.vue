@@ -141,7 +141,7 @@
             <q-btn-toggle
             spread
               label="Car type"
-              v-model="carType"
+              v-model="paymentType"
               toggle-color="purple"
               :options="[
                 { value: 'cash', slot: 'one' },
@@ -339,6 +339,7 @@ export default defineComponent({
       currentIndex: null,
       requestStatus: null,
       currentRequest: null,
+      paymentType: 'cash',
     };
   },
   methods: {

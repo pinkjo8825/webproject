@@ -1,7 +1,7 @@
 <template>
 <h1>
-  <h1>{{storeLogUser.getCurrentUserIndex}}</h1>
-  <h3>{{storeLogUser.getRequestStatus[0]}}</h3>
+  <p>lorem10</p>
+
 </h1>
 
   <div>

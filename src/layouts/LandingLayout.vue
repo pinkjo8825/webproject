@@ -10,7 +10,7 @@
           v-if="storeLogUser.logInStatus"
           label="Car Wash Request"
           @click="
-            storeLogUser.currentUsername.toLowerCase() == 'admin'
+            storeLogUser.currentUsername === 'admin'
               ? this.$router.push('/admin')
               : this.$router.push('/user')
           "
@@ -139,7 +139,6 @@ export default {
       if (success) {
         this.storeLogUser.logInStatus = true;
         this.storeLogUser.currentUsername = this.username;
-        this.storeLogUser.currentIndex = this.storeLogUser.users.length - 1;
         this.$refs.loginDialog.hide();
         Notify.create({
           type: "positive",
@@ -159,15 +158,11 @@ export default {
     onLogout() {
       this.storeLogUser.logInStatus = false;
       this.storeLogUser.currentUsername = '';
-      this.storeLogUser.currentIndex = null;
-
+      this.$router.push("/")
       Notify.create({
         type: "positive",
         message: "Logout successfully.",
       });
-      setTimeout(() => {
-        this.$router.push("/");
-      }, 2000);
     },
   },
 };
