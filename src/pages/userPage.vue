@@ -404,6 +404,7 @@ export default defineComponent({
       }
       return sum;
     },
+
     onSubmit() {
       let newRequest = {
         licensePlate: this.licensePlate,
@@ -413,6 +414,7 @@ export default defineComponent({
         status: "pending",
         visible: true,
       };
+      console.log(newRequest)
       this.storeLogUser.users[
         this.storeLogUser.getCurrentUserIndex
       ].requests.push(newRequest);

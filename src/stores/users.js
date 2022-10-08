@@ -17,19 +17,6 @@ export const useCounterStore = defineStore("counter", {
     },
   },
   actions: {
-    createNewUser(
-      username,
-      password,
-      img = "default-avatar.png",
-      requests = [],
-    ) {
-      const newUser = {
-        username: username,
-        password: password,
-        imageUrl: img,
-        requests: requests,
-      };
-      this.users.push(newUser);
-    },
+
   },
 });

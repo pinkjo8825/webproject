@@ -140,6 +140,16 @@ export default {
       this.password = null;
       this.upload_avatar = null;
     },
+    createNewUser() {
+      const newUser = {
+        username: this.username,
+        password: this.password,
+        imageUrl: this.imageUrl,
+        requests: [],
+      };
+      console.log(newUser);
+      this.storeLogUser.users.push(newUser);
+    },
     onSubmit() {
       let exist = false;
       for (let user of this.storeLogUser.users) {
@@ -156,11 +166,7 @@ export default {
           message: "Username already exists",
         });
       } else {
-        this.storeLogUser.createNewUser(
-          this.username,
-          this.password,
-          this.imageUrl
-        );
+        this.createNewUser();
         Notify.create({
           type: "position",
           message: "create an account successfully.",

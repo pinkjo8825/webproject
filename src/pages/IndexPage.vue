@@ -1,6 +1,6 @@
 <template>
   <h1>{{ getRequestType() }}</h1>
-  <h3>{{ getCurrentUserRequestType()}}</h3>
+  <h3>{{ getCurrentUserRequestType() }}</h3>
   <div>
     Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam hic
     voluptatem dolores nam saepe itaque atque? Maiores temporibus voluptate,
@@ -17,8 +17,6 @@ export default defineComponent({
   data() {
     return {
       storeLogUser: useCounterStore(),
-      alLog: true,
-      array: [1, 2, 3, 4],
     };
   },
   methods: {
@@ -60,10 +58,14 @@ export default defineComponent({
     },
   },
   setup() {
-    if (store.users < 1) {
-      store.createNewUser("admin", "123456789");
-      store.createNewUser("john", "123456789");
-      store.createNewUser("net", "123456789");
+    if(store.users.length < 1) {
+      const newUser = {
+      username: "admin",
+      password: 'password',
+      imageUrl: '',
+      requests: [],
+    };
+    store.users.push(newUser);
     }
   },
 });
