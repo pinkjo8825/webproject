@@ -1,12 +1,44 @@
 <template>
-  <h1>{{ getRequestType() }}</h1>
-  <h3>{{ getCurrentUserRequestType() }}</h3>
-  <div>
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam hic
-    voluptatem dolores nam saepe itaque atque? Maiores temporibus voluptate,
-    quaerat perspiciatis optio repellat laboriosam cum vel ab quidem facere
+  <div class="bg-image fixed text-blue-1 q-px-xl">
+    <div class="q-px-xl q-mt-xl flex justify-center">
+      <div class="q-mt-xl text-h1" id="title">
+        CAR WASHING SYSTEM
+        <div>
+          <q-btn
+            color="deep-orange"
+            glossy
+            @click="priceDialog = true"
+            label="Pricing"
+          />
+        </div>
+      </div>
+
+      <div class="q-mt-xl">
+        <img
+          src="carwash.svg"
+          width="500"
+          height="300"
+        />
+      </div>
+    </div>
+    <div class="secondary q-mt-xl flex justify-center"></div>
   </div>
-  <q-icon name="local_car_wash" />
+  <q-dialog v-model="priceDialog">
+    <q-card>
+
+        <q-card-section class="q-pt-sm">
+         <img
+          src="price.png"
+          width="500"
+          height="300"
+        />
+        </q-card-section>
+        <q-separator/>
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+  </q-dialog>
 </template>
 <script>
 import { defineComponent } from "vue";
@@ -17,6 +49,7 @@ export default defineComponent({
   data() {
     return {
       storeLogUser: useCounterStore(),
+      priceDialog: false
     };
   },
   methods: {
@@ -58,15 +91,37 @@ export default defineComponent({
     },
   },
   setup() {
-    if(store.users.length < 1) {
+    if (store.users.length < 1) {
       const newUser = {
-      username: "admin",
-      password: 'password',
-      imageUrl: '',
-      requests: [],
-    };
-    store.users.push(newUser);
+        username: "admin",
+        password: "password",
+        imageUrl: "",
+        requests: [],
+      };
+      store.users.push(newUser);
     }
   },
 });
 </script>
+
+<style scoped>
+#title {
+  width: 500px;
+  height: 300px;
+}
+.center-text {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.bg-image {
+  width: 100%;
+  height: 100%;
+  background: rgb(53, 50, 103);
+  background: linear-gradient(
+    45deg,
+    rgba(53, 50, 103, 1) 13%,
+    rgba(26, 123, 164, 0.9206276260504201) 41%
+  );
+}
+</style>
